@@ -311,6 +311,19 @@ Value builtin_length(const Context *, const EvalContext *evalctx)
 	return Value();
 }
 
+Value builtin_concat(const Context *, const std::vector<std::string>&, const std::vector<Value> &args)
+{
+	Value::VectorType new_vector;
+	for(std::vector<Value>::size_type i = 0; i < args.size(); i++){
+		if (args[i].type() == Value::VECTOR){
+			Value::VectorType iv = args[i].toVector();
+			for(Value::VectorType::const_iterator it = iv.begin(); it != iv.end(); ++it )
+				new_vector.push_back(*it);
+		}
+	}
+	return Value(new_vector);
+}
+
 Value builtin_log(const Context *, const EvalContext *evalctx)
 {
 	if (evalctx->numArgs() == 2 && evalctx->getArgValue(0).type() == Value::NUMBER && evalctx->getArgValue(1).type() == Value::NUMBER)
@@ -549,6 +562,7 @@ void register_builtin_functions()
 	Builtins::init("sqrt", new BuiltinFunction(&builtin_sqrt));
 	Builtins::init("exp", new BuiltinFunction(&builtin_exp));
 	Builtins::init("len", new BuiltinFunction(&builtin_length));
+	Builtins::init("cat", new BuiltinFunction(&builtin_concat));
 	Builtins::init("log", new BuiltinFunction(&builtin_log));
 	Builtins::init("ln", new BuiltinFunction(&builtin_ln));
 	Builtins::init("str", new BuiltinFunction(&builtin_str));
