@@ -311,12 +311,13 @@ Value builtin_length(const Context *, const EvalContext *evalctx)
 	return Value();
 }
 
-Value builtin_concat(const Context *, const std::vector<std::string>&, const std::vector<Value> &args)
+Value builtin_concat(const Context *, const EvalContext *evalctx)
 {
 	Value::VectorType new_vector;
-	for(std::vector<Value>::size_type i = 0; i < args.size(); i++){
-		if (args[i].type() == Value::VECTOR){
-			Value::VectorType iv = args[i].toVector();
+	for(size_t i = 0; i < evalctx->numArgs(); i++){
+		const Value& arg = evalctx->getArgValue(i);
+		if (arg.type() == Value::VECTOR){
+			Value::VectorType iv = arg.toVector();
 			for(Value::VectorType::const_iterator it = iv.begin(); it != iv.end(); ++it )
 				new_vector.push_back(*it);
 		}
